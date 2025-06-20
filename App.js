@@ -61,20 +61,21 @@ const GridZenGame = () => {
   // Load sounds
   const loadSounds = async () => {
     try {
-      // Set audio mode first
-      await Audio.setAudioModeAsync({
-        playsInSilentModeIOS: true,
-        shouldDuckAndroid: true,
-        staysActiveInBackground: false,
-      });
+    // Only attempt to set audio mode on native platforms
+      if (Platform.OS !== 'web') {
+       try {
+          await Audio.setAudioModeAsync({
+            playsInSilentModeIOS: true,
+            shouldDuckAndroid: true,
+            staysActiveInBackground: false,
+          });
+        } catch (audioError) {
+        console.log('Audio setup failed:', audioError);
+        }
+      }
 
-      // For testing in Expo Go, you can use online URLs
-      // Replace these with your actual audio file URLs if you host them
-      // For production, the local files will work fine
-      
-      console.log('Loading sounds...');
-      
-      // Try loading from local files (will work in production builds)
+     console.log('Loading sounds...');
+
       try {
         const { sound: gameOver } = await Audio.Sound.createAsync(
           require('./assets/sounds/Game_over.mp3')
@@ -82,18 +83,18 @@ const GridZenGame = () => {
         const { sound: victory } = await Audio.Sound.createAsync(
           require('./assets/sounds/Cheer.mp3')
         );
-        
+
         gameOverSound.current = gameOver;
         victorySound.current = victory;
-        
+
         console.log('Sounds loaded successfully');
-      } catch (error) {
+      } catch (loadError) {
         console.log('Note: Sounds may not work in iOS Simulator with Expo Go');
         console.log('They will work on physical devices and in production builds');
       }
 
     } catch (error) {
-      console.log('Audio setup error:', error);
+      console.log('Unexpected error during sound setup:', error);
     }
   };
 
