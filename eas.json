@@ -13,7 +13,7 @@
     },
     "production": {
       "android": {
-        "autoIncrement": false
+        "autoIncrement": true
       },
       "ios": {
         "autoIncrement": true
